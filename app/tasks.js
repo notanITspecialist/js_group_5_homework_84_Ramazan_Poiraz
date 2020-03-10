@@ -17,7 +17,7 @@ router.post('/', checkAuth, async (req, res) => {
 
 router.get('/', checkAuth, async (req, res) => {
    try {
-       const data = await Task.find();
+       const data = await Task.find({user: req.user});
 
        res.send(data);
    }  catch (e) {
