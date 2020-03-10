@@ -6,6 +6,8 @@ const Task = require('../models/task');
 const checkAuth = require('../middleware/checkAuthorization');
 
 router.post('/', checkAuth, async (req, res) => {
+    if(req.body.user !== req.user._id) res.status(400).send({error: 'User id is incorrect'});
+
     try {
         const newTask = await Task.create(req.body);
 
