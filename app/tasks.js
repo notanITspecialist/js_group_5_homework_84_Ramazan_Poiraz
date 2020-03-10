@@ -6,7 +6,7 @@ const Task = require('../models/task');
 const checkAuth = require('../middleware/checkAuthorization');
 
 router.post('/', checkAuth, async (req, res) => {
-    if(req.body.user !== req.user._id) res.status(400).send({error: 'User id is incorrect'});
+    req.body.user = req.user;
 
     try {
         const newTask = await Task.create(req.body);
@@ -28,6 +28,9 @@ router.get('/', checkAuth, async (req, res) => {
 });
 
 router.put('/:id', checkAuth, async (req, res) => {
+    const task = await Task.findOne({_id: req.params.id});
+
+    if(task.user.toString() !== req.user._id.toString()) res.status(400).send({error: 'Its not your task'});
     if(!req.body.title || !req.body.status) res.status(400).send({error: 'Title or status is not found'});
 
     const whiteList = req.body.description ? {
